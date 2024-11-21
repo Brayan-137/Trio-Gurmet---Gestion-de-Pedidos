@@ -12,9 +12,21 @@ let orders = null;
 
 window.onload = async () => {
     // Obtener los pedidos de la base de datos
-    orders = await fetch(API_URL).then(response => response.json()).catch(error => console.log("Error:" + String(error)));
+    orders = await fetch(API_URL, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'aplication/json',
+            'User-Type': 'employee',
+            'Authorization': `Bearer ${"9|7UwzgXqhxT6AnKy6DxbHTEnAKRhXJIGlz2NTC12h3b7d3315"}`
+        }
+    })
+    .then(response => response.json())
+    .then(data => () => {
+        console.log(data);
+        mostrarPedidos();
+    })
+    .catch(error => console.log("Error:" + String(error)));
 
-    mostrarPedidos();
 
     // Eventos
     filtroForm.addEventListener('submit', (event) => {
@@ -84,7 +96,11 @@ async function cambiarEstado(id, estadoActual) {
 
     await fetch(`${API_URL}/${id}`, {
         method: 'PATCH',	
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'User-Type': 'employee',
+            'Authorization': `Bearer ${8|eynwNsGwZ5S2APIbO6TUuCRaH4gZpx3PMMoRGV3Wa4a8736e}`
+         },
         body: JSON.stringify({ status: nuevoEstado }),
     })
     .then((response) => response.json())
