@@ -12,7 +12,7 @@ let orders = null;
 
 window.onload = async () => {
     // Obtener los pedidos de la base de datos
-    orders = await fetch(API_URL, {
+    await fetch(API_URL, {
         method: 'GET',
         headers: {
             'Content-Type': 'aplication/json',
@@ -21,8 +21,8 @@ window.onload = async () => {
         }
     })
     .then(response => response.json())
-    .then(data => () => {
-        console.log(data);
+    .then(data => {
+        orders = data;
         mostrarPedidos();
     })
     .catch(error => console.log("Error:" + String(error)));
