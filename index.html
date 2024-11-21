@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Pedidos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Gestión de Pedidos</h1>
+    </header>
+    <main>
+        <section id="filtros-section">
+            <h2>Filtrar Pedidos</h2>
+            <form id="filtro-form">
+                <label for="estado">Estado:</label>
+                <select id="estado">
+                    <option value="">Todos</option>
+                    <option value="pendiente">PENDING</option>
+                    <option value="atendido">RESOLVED</option>
+
+                </select>
+                
+                <label for="nombre">Nombre del Cliente:</label>
+                <input type="text" id="nombre" placeholder="Buscar por nombre">
+                
+                <button type="submit">Filtrar</button>
+            </form>
+        </section>
+        <section id="tabla-section">
+            <h2>Listado de Pedidos</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>Estado</th>
+                        <th>IdCliente</th>
+                        <th>Nombre del Cliente</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-pedidos"></tbody>
+            </table>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
