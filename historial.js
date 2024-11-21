@@ -10,12 +10,10 @@ window.onload = () => {
 
             datosPedidos.innerHTML = '';
 
-            response.forEach(skills => {
+            response.orders.forEach(dishes => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${skills.id}</td>
-                    <td>${skills.name}</td>
-                    <td>${skills.description}</td>
+                    <td>${dishes.id}</td>
                 `;
                 datosPedidos.appendChild(row);
             });
@@ -27,16 +25,22 @@ window.onload = () => {
 
 async function loadDatosPedido() {
     console.log("loadDatosPedido");
+    const id = sessionStorage.getItem('id')
+    const token = sessionStorage.getItem('token')
+    console.log(token)
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/skills', {
+        const response = await fetch('http://127.0.0.1:8000/api/clients/'+id, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'User-Type': 'client',
+                'Authorization': 'Bearer ' + token
             }
         });
 
         if (response.ok) {
             const datos = await response.json();
+            console.log(datos)
             return datos;
         } else {
             console.error("Error en la respuesta de la API:", response.status);
