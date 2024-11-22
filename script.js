@@ -63,10 +63,10 @@ function mostrarPedidos(pedidos=orders) {
     tablaPedidos.innerHTML = ''; 
 
     if (pedidos.length === 0) {
-        tablaPedidos.innerHTML = '<tr><td colspan="5">No se encontraron pedidos.</td></tr>';
+        tablaPedidos.innerHTML = '<tr><td colspan="4">No se encontraron pedidos.</td></tr>';
         return;
     }
-
+    // console.log(pedidos);
     pedidos.forEach((pedido) => {
         // console.log('Procesando pedido:', pedido); 
 
@@ -75,13 +75,22 @@ function mostrarPedidos(pedidos=orders) {
 
         row.innerHTML = `
             <td>${pedido.id || 'Sin ID'}</td>
-            <td>${pedido.status || 'Desconocido'}</td>
             <td>${pedido.client_id || 'Sin Cliente'}</td>
             <td>${pedido.client ? pedido.client.name : 'Sin Nombre'}</td>
-            <td class="actions">
-                <button class="update" onclick="cambiarEstado(${pedido.id}, '${pedido.status}')">Cambiar Estado</button>
-            </td>
         `;
+        let dishes = document.createElement('ul');
+        let total = 0;
+        pedido.dishes.forEach((dish) => {
+            let li = document.createElement('li')
+            li.innerHTML = dish.name;
+            total += dish.price*dish.pivot.quantity;
+            dishes.append(li)
+        });
+        let dishes_campo = document.createElement('td');
+        dishes_campo.append(dishes);
+        row.append(dishes_campo);
+        row.innerHTML += `<td>$${total}</td>`;
+        row.innerHTML += `<td onClick="cambiarEstado(${pedido.id}, '${pedido.status}')"><p>${pedido.status || 'Desconocido'}</p></td>`;
 
         tablaPedidos.appendChild(row);
     });
@@ -97,22 +106,28 @@ async function cambiarEstado(id, estadoActual) {
     await fetch(`${API_URL}/${id}`, {
         method: 'PATCH',	
         headers: {
-            'Content-Type': 'application/json',
-            'User-Type': 'employee',
-            'Authorization': `Bearer ${8|eynwNsGwZ5S2APIbO6TUuCRaH4gZpx3PMMoRGV3Wa4a8736e}`
+            'Accept': 'aplication/json',
+            'Content-Type': 'aplication/json',
+            'Authorization': `Bearer ${"9|7UwzgXqhxT6AnKy6DxbHTEnAKRhXJIGlz2NTC12h3b7d3315"}`,
          },
-        body: JSON.stringify({ status: nuevoEstado }),
+        body: JSON.stringify({ status: nuevoEstado})
     })
-    .then((response) => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la solicitud: ' + response.statusText);
+          }
+          return response.json();
+    })
     .then((data) => {
+        console.log(data)
         orders.forEach((order) => {
             if(order.id === data.id){
                 // console.log('Procesando pedido:', order);
 
                 order.status = data.status;
 
-                tr.querySelector('td:nth-child(2)').textContent = data.status;
-                tr.querySelector('td:nth-child(5) button').setAttribute('onclick', `cambiarEstado('${order.id}', '${order.status}')`);
+                tr.querySelector('td:nth-child(5)').textContent = data.status;
+                tr.querySelector('td:nth-child(6)').setAttribute('onclick', `cambiarEstado('${order.id}', '${order.status}')`);
                 filtrarPedidos();
             }
         });
