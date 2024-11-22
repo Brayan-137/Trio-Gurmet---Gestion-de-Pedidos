@@ -29,7 +29,7 @@ async function loadDatosPedido() {
     const token = sessionStorage.getItem('token')
     console.log(token)
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/clients/'+id, {
+        const response = await fetch('https://triogourmet-bps-pnt20242-unisabana.onrender.com/api/clients/'+id, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

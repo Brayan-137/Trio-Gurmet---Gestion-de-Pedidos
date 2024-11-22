@@ -4,6 +4,8 @@ window.onload = () => {
     const input_password = document.getElementById("input_password");
     const label_message = document.getElementById("label_message");
 
+    console.log(sessionStorage.getItem('email'), sessionStorage.getItem('password'))
+
     input_email.setAttribute('value', sessionStorage.getItem('email'));
     input_password.setAttribute('value', sessionStorage.getItem('password'));
 
@@ -21,15 +23,14 @@ window.onload = () => {
         const token = sessionStorage.getItem('token');
 
         if (!token || token == "undefined") {
-            await login(email, password);
+            login(email, password);
         } 
     });
 }
 
-
 async function login(email, password) {
     console.log("login");
-    return fetch('http://127.0.0.1:8000/api/login', {
+    return fetch('https://triogourmet-bps-pnt20242-unisabana.onrender.com/api/login', {
         method: 'POST',
         headers: {
             'Authorization': 'Basic ' + btoa(`${email}:${password}`),
@@ -40,18 +41,13 @@ async function login(email, password) {
     .then(response => {
         if (response.ok) {
             return response.json().then(datos =>{
-                console.log(datos);
-                window.location.href = 'indexGestorPedidos.html';
+                sessionStorage.setItem('token', datos.access_token);
+                window.location.href = 'index.html';
             });
         } else {
             label_message.textContent = 'Nombre o contraseña incorrectos';
             throw new Error("Error de autenticación: " + response.status);
         }
-    })
-    .then(response => {
-        sessionStorage.setItem('token', response.token)
-        console.log(sessionStorage.getItem('token'));
-        return response
     })
     .catch(error => {
         console.error("Error: " + error);

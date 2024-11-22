@@ -1,23 +1,33 @@
 // URL base de la API
-const API_URL = 'http://127.0.0.1:8000/api/orders';
+const API_URL = 'https://triogourmet-bps-pnt20242-unisabana.onrender.com/api/orders';
 
 // Selección de elementos del DOM
-const filtroForm = document.getElementById('filtro-form');
-const estadoSelect = document.getElementById('estado');
-const nombreInput = document.getElementById('nombre');
-const tablaPedidos = document.getElementById('tabla-pedidos');
+let filtroForm = null;
+let estadoSelect = null;
+let nombreInput = null;
+let tablaPedidos = null;
 
 let orders = null;
 
-
 window.onload = async () => {
+    if (!sessionStorage.getItem('token')) {
+        window.location.href = 'login.html';
+    }
+
+    filtroForm = document.getElementById('filtro-form');
+    estadoSelect = document.getElementById('estado');
+    nombreInput = document.getElementById('nombre');
+    tablaPedidos = document.getElementById('tabla-pedidos');
+
+    const token = sessionStorage.getItem('token');
+
     // Obtener los pedidos de la base de datos
     await fetch(API_URL, {
         method: 'GET',
         headers: {
             'Content-Type': 'aplication/json',
-            'User-Type': 'employee',
-            'Authorization': `Bearer ${"9|7UwzgXqhxT6AnKy6DxbHTEnAKRhXJIGlz2NTC12h3b7d3315"}`
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
         }
     })
     .then(response => response.json())
@@ -25,7 +35,7 @@ window.onload = async () => {
         orders = data;
         mostrarPedidos();
     })
-    .catch(error => console.log("Error:" + String(error)));
+    // .catch(error => console.log("Error:" + String(error)));
 
 
     // Eventos
@@ -40,6 +50,37 @@ window.onload = async () => {
     nombreInput.addEventListener('input', (event) => {
         clearTimeout(temporizador);
         temporizador = setTimeout(filtrarPedidos, 500);
+    });
+
+    const logout = document.getElementById('button-logout');
+
+    logout.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const token = sessionStorage.getItem('token');
+        if (token) {
+            await fetch('https://triogourmet-bps-pnt20242-unisabana.onrender.com/api/logout', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                console.log(response)
+                if (!response.ok) {
+                    console.log("Error en la respuesta");
+                    return;
+                }
+                response.json();
+            })
+            .then(response => {
+                console.log(response);
+                sessionStorage.clear();
+                window.location.href = 'login.html'
+            })
+            .catch(error => console.log("Error: ", error));
+        }  
     });
 }
 
@@ -102,13 +143,14 @@ async function cambiarEstado(id, estadoActual) {
     const tr = document.querySelector(`tr[data-id="${id}"]`);
 
     console.log(`Cambiando estado del pedido con ID ${id} a ${nuevoEstado}`);
+    const token = sessionStorage.getItem('token');
 
     await fetch(`${API_URL}/${id}`, {
         method: 'PATCH',	
         headers: {
             'Accept': 'aplication/json',
             'Content-Type': 'aplication/json',
-            'Authorization': `Bearer ${"9|7UwzgXqhxT6AnKy6DxbHTEnAKRhXJIGlz2NTC12h3b7d3315"}`,
+            'Authorization': `Bearer ${token}`,
          },
         body: JSON.stringify({ status: nuevoEstado})
     })
