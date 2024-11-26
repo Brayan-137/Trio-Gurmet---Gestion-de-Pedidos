@@ -16,6 +16,7 @@ body {
     background-size: cover;
     background-attachment: fixed;
     font-size: 1.2rem;
+    min-width: min-content;
 }
 
 header {

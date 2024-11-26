@@ -35,6 +35,7 @@ async function login(email, password) {
         headers: {
             'Authorization': 'Basic ' + btoa(`${email}:${password}`),
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
             'User-Type': 'employee'
         },
     })
